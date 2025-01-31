@@ -14,7 +14,7 @@ library(parallel)
 library(rjags)
 load.module("lecuyer")
 
-source('functions/rjags_in_parallel.r')
+source(normalizePath('functions/rjags_in_parallel.r'))
 
 args <- as.list(commandArgs(trailingOnly = TRUE))
 
@@ -54,13 +54,13 @@ list2env(args, envir = .GlobalEnv)
 
 
 ##  bring in data object:
-load('input/dat.r')
+load(normalizePath('input/dat.r'))
 
 ##  variables to monitor:
-vars <- drop(read.csv("input/vars.csv", comment.char = "#", header = F)[,1])
+vars <- drop(read.csv(normalizePath("input/vars.csv"), comment.char = "#", header = F)[,1])
 
 ##  bring in initial values:
-load("input/inits.R")
+load(normalizePath("input/inits.R"))
 
 ##  set random number generators for cores: 
 rnd <- parallel.seeds("lecuyer::RngStream", n.cores)
@@ -72,7 +72,7 @@ jl.unit <- list(adapt = n.adapt,
                 var = vars,
                 dat = dat, #c(dat, list(rem.p = inits.stuff$rem.v)),
                 thin = n.thin,
-                file.nm = paste0('jags/mod.r'),
+                file.nm = normalizePath(paste0('jags/mod.r')),
                 inits = init.lst,    ### inits.stuff.proj
                 drop = F)
 
@@ -94,7 +94,7 @@ mod <- sapply(out.pre, FUN = function (l) { get("jm", l) }, simplify=F)
 
 ## safety measure, in case subsequent steps to save output fail:
 dir.create('jags_backup', recursive = TRUE)
-save(out, mod, jl.unit, sc.lst, elap, file = paste0('~/jags_backup/jags_output_', Sys.Date(), '_', sample(x = 1e4, size = 1), '.R'))
+save(out, mod, jl.unit, sc.lst, elap, file = file.path('jags_backup', paste0('jags_output_', Sys.Date(), '_', sample(x = 1e4, size = 1), '.R')))
 
 ###  this doesn't seem to work when there is a data block at the beginning of the JAGS model file: it won't re-run that portion!  Annoying...
 #out.cont.pre <-  mclapply(mod, FUN=jags.cont, dat = dat, vars = vars, n.update = 1e4, n.monitor = 5e3, mc.cores = n.cores) 
@@ -112,11 +112,11 @@ save(out, mod, jl.unit, sc.lst, elap, file = paste0('~/jags_backup/jags_output_'
   mod.code <- paste0(scan(jl.unit$file.nm, what = "character", sep = "\n"), collapse = "\n")
 
 ##  before attempting to save output, make sure the target directory exists:
-  mcmc.path <- paste0('output/mcmc/', spp, '/ipm/')
-  summ.path <- paste0('output/summ/', spp, '/ipm/')
+  mcmc.path <- file.path('output', 'mcmc', spp, 'ipm')
+  summ.path <- file.path('output', 'summ', spp, 'ipm')
   dir.create(mcmc.path, recursive = TRUE)
   dir.create(summ.path, recursive = TRUE)
   
-  save(out, mod, jl.unit, sc.lst, elap, mod.code, file = paste0(mcmc.path, fnm, '_', label, '.R'))
-  save(s, mod, jl.unit, sc.lst, elap, mod.code, file = paste0(summ.path, fnm, '_', label, '.R'))
+  save(out, mod, jl.unit, sc.lst, elap, mod.code, file = file.path(mcmc.path, paste0(fnm, '_', label, '.R')))
+  save(s, mod, jl.unit, sc.lst, elap, mod.code, file = file.path(summ.path, paste0(fnm, '_', label, '.R')))
 
