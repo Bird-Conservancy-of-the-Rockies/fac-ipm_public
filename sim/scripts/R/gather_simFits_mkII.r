@@ -5,7 +5,7 @@
 ############################################
 
 ## loads function gathrFits():
-source('functions/gather_simFits.r')
+source(normalizePath('functions/gather_simFits.r'))
 
 library(vioplot)
 
@@ -141,7 +141,7 @@ lab.df <- data.frame(lab = rep(TRUE, length(nms)),
 #############################################
 ##  FIGURE:
 
-png(file = paste0('figs/violin/violin_', Sys.Date(), '_twoRow.png'), width = 15, height = 7, units = "in", res = 400)
+png(file = file.path('figs', 'violin', paste0('violin_', Sys.Date(), '_twoRow.png')), width = 15, height = 7, units = "in", res = 400)
 ### for axis labels on right side:
 #par(mfcol = c(2, length(nms)), mar = c(3,3,1,1), oma = c(2,3,0,5))
 ### for NO axis labels on right side:
@@ -211,24 +211,24 @@ tab <- xtable(df)
 print(tab, include.rownames = FALSE)
 
 
-% latex table generated in R 4.3.3 by xtable 1.8-4 package
-% Thu Jun  6 18:04:53 2024
-\begin{table}[ht]
-\centering
-\begin{tabular}{llrrrrrrrrrrrrrrrrrr}
-  \hline
-par & seas & A.Bias & A.RMSE & A.Coverage & B.Bias & B.RMSE & B.Coverage & C.Bias & C.RMSE & C.Coverage & D.Bias & D.RMSE & D.Coverage & E.Bias & E.RMSE & E.Coverage & F.Bias & F.RMSE & F.Coverage \\
-  \hline
-lambda.int & br & -0.00 & 0.07 & 98 & -0.01 & 0.08 & 95 & -0.01 & 0.08 & 96 & 0.00 & 0.07 & 98 & 0.00 & 0.07 & 97 & -0.01 & 0.07 & 98 \\
-  lambda.int & nb & -0.01 & 0.17 & 95 & -0.02 & 0.18 & 93 & 0.00 & 0.17 & 96 & -0.02 & 0.17 & 94 & -0.00 & 0.17 & 94 & -0.01 & 0.17 & 93 \\
-  phi.int & br & -1.98 & 2.53 & 100 & 0.52 & 1.41 & 100 & 0.53 & 1.42 & 100 & 0.44 & 1.40 & 100 & 0.46 & 1.39 & 100 & 0.15 & 0.67 & 100 \\
-  phi.int & m1 & -0.49 & 1.51 & 100 & -0.63 & 1.60 & 100 & -0.70 & 1.69 & 100 & 0.40 & 1.10 & 100 & 0.37 & 1.08 & 100 & 0.39 & 1.05 & 100 \\
-  phi.int & nb & -0.55 & 1.56 & 100 & -0.69 & 1.63 & 100 & 0.19 & 0.81 & 100 & 0.41 & 1.11 & 100 & 0.36 & 0.82 & 100 & 0.10 & 0.42 & 100 \\
-  phi.int & m2 & -0.88 & 1.71 & 100 & -1.01 & 1.81 & 100 & -0.97 & 1.80 & 100 & 0.13 & 1.04 & 100 & 0.07 & 1.00 & 100 & 0.10 & 0.98 & 100 \\
-  eps.int & br & 0.14 & 1.26 & 100 & 0.21 & 1.28 & 100 & 0.29 & 1.34 & 100 & -0.34 & 1.09 & 100 & -0.32 & 1.07 & 100 & -0.34 & 1.05 & 100 \\
-  eps.int & nb & -0.17 & 0.95 & 100 & -0.05 & 0.94 & 100 & -0.15 & 0.95 & 100 & -0.05 & 0.89 & 97 & -0.12 & 0.88 & 98 & 0.02 & 0.86 & 100 \\
-  iota.int & br & -2.02 & 2.37 & 38 & -1.53 & 1.90 & 50 & -1.12 & 1.56 & 69 & 0.01 & 0.16 & 99 & -0.01 & 0.16 & 100 & -0.00 & 0.16 & 97 \\
-  iota.int & nb & -1.81 & 2.14 & 34 & -1.35 & 1.70 & 43 & -1.03 & 1.42 & 61 & -0.05 & 0.11 & 98 & -0.03 & 0.11 & 98 & -0.02 & 0.10 & 100 \\
-   \hline
-\end{tabular}
-\end{table}
+#% latex table generated in R 4.3.3 by xtable 1.8-4 package
+#% Thu Jun  6 18:04:53 2024
+#\begin{table}[ht]
+#\centering
+#\begin{tabular}{llrrrrrrrrrrrrrrrrrr}
+#  \hline
+#par & seas & A.Bias & A.RMSE & A.Coverage & B.Bias & B.RMSE & B.Coverage & C.Bias & C.RMSE & C.Coverage & D.Bias & D.RMSE & D.Coverage & E.Bias & E.RMSE & E.Coverage & F.Bias & F.RMSE & F.Coverage \\
+#  \hline
+#lambda.int & br & -0.00 & 0.07 & 98 & -0.01 & 0.08 & 95 & -0.01 & 0.08 & 96 & 0.00 & 0.07 & 98 & 0.00 & 0.07 & 97 & -0.01 & 0.07 & 98 \\
+#  lambda.int & nb & -0.01 & 0.17 & 95 & -0.02 & 0.18 & 93 & 0.00 & 0.17 & 96 & -0.02 & 0.17 & 94 & -0.00 & 0.17 & 94 & -0.01 & 0.17 & 93 \\
+#  phi.int & br & -1.98 & 2.53 & 100 & 0.52 & 1.41 & 100 & 0.53 & 1.42 & 100 & 0.44 & 1.40 & 100 & 0.46 & 1.39 & 100 & 0.15 & 0.67 & 100 \\
+#  phi.int & m1 & -0.49 & 1.51 & 100 & -0.63 & 1.60 & 100 & -0.70 & 1.69 & 100 & 0.40 & 1.10 & 100 & 0.37 & 1.08 & 100 & 0.39 & 1.05 & 100 \\
+#  phi.int & nb & -0.55 & 1.56 & 100 & -0.69 & 1.63 & 100 & 0.19 & 0.81 & 100 & 0.41 & 1.11 & 100 & 0.36 & 0.82 & 100 & 0.10 & 0.42 & 100 \\
+#  phi.int & m2 & -0.88 & 1.71 & 100 & -1.01 & 1.81 & 100 & -0.97 & 1.80 & 100 & 0.13 & 1.04 & 100 & 0.07 & 1.00 & 100 & 0.10 & 0.98 & 100 \\
+#  eps.int & br & 0.14 & 1.26 & 100 & 0.21 & 1.28 & 100 & 0.29 & 1.34 & 100 & -0.34 & 1.09 & 100 & -0.32 & 1.07 & 100 & -0.34 & 1.05 & 100 \\
+#  eps.int & nb & -0.17 & 0.95 & 100 & -0.05 & 0.94 & 100 & -0.15 & 0.95 & 100 & -0.05 & 0.89 & 97 & -0.12 & 0.88 & 98 & 0.02 & 0.86 & 100 \\
+#  iota.int & br & -2.02 & 2.37 & 38 & -1.53 & 1.90 & 50 & -1.12 & 1.56 & 69 & 0.01 & 0.16 & 99 & -0.01 & 0.16 & 100 & -0.00 & 0.16 & 97 \\
+#  iota.int & nb & -1.81 & 2.14 & 34 & -1.35 & 1.70 & 43 & -1.03 & 1.42 & 61 & -0.05 & 0.11 & 98 & -0.03 & 0.11 & 98 & -0.02 & 0.10 & 100 \\
+#   \hline
+#\end{tabular}
+#\end{table}

@@ -60,10 +60,10 @@ stopifnot(args["ann.var"] %in% c("yesAnn", "noAnn"))
 #####################################################################
 
 ##  Load parameters for the generating model:
-load(paste0('sims/', args[1], '.r'))
+load(normalizePath(paste0('sims/', args[1], '.r')))
 
 ##  Load the data-generating function and run it to create a number of datasets:
-source('functions/effBreed_dec2023.r')
+source(normalizePath('functions/effBreed_dec2023.r'))
 
 if (args["ann.var"] == "yesAnn") {
   sim.lst <- gen.noCovs(n.sim = as.integer(args["n.sim"]), n.sites = as.integer(args[c("br.n.site","nb.n.site")]), psi.mn = if(args["ZIP"] == "yesZ") c(0.7,0.7) else NULL)
@@ -87,7 +87,7 @@ sim.lst <- within(sim.lst,
 #####################################################################
 
 ##  Make initial values for latent, integer-valued state variables, for use in JAGS model run:
-source('functions/init_maker_simDim.r')
+source(normalizePath('functions/init_maker_simDim.r'))
 init.lst <- init.maker(sim.lst$dat, simDim = T)
 
 ##  Identify variables to monitor:
@@ -102,7 +102,7 @@ vars <- c(
 
 
 ##  Load functions to run JAGS models in parallel:
-source('../fit/functions/rjags_in_parallel.r')
+source(normalizePath('../fit/functions/rjags_in_parallel.r'))
 
 library(parallel)
 library(rjags)
@@ -119,7 +119,7 @@ jl.unit <- list(iter.burn = 1e4,
                 dat = dat, #c(dat, list(rem.p = inits.stuff$rem.v)),
                 thin = 5,
                 adapt = 1e3,
-                file.nm = paste0('jags/', args["mod.file"], '.r'),
+                file.nm = normalizePath(paste0('jags/', args["mod.file"], '.r')),
                 inits = init.lst,    ### inits.stuff.proj
                 drop = F)
 
@@ -144,11 +144,11 @@ mod <- sapply(out.pre, FUN = function (l) { get("jm", l) }, simplify=F)
 fnm <- paste0(args["chunk"], "_", args["par.file"], "_", args["mod.file"], "_", Sys.Date())
 ts <- Sys.time()
 
-if (!dir.exists('output/mcmc')) {
-  dir.create('output/mcmc')
+if (!dir.exists(normalizePath('output/mcmc'))) {
+  dir.create(normalizePath('output/mcmc'))
 }
 
-save(out, mod, sim.lst, time, ts, file = paste0('output/mcmc/', fnm, '.R'))
+save(out, mod, sim.lst, time, ts, file = normalizePath(paste0('output/mcmc/', fnm, '.R')))
 
 #####################################################################
 ##  END Block 4                                                     ##
