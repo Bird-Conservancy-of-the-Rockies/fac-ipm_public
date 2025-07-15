@@ -231,4 +231,74 @@ print(tab, include.rownames = FALSE)
 #  iota.int & nb & -1.81 & 2.14 & 34 & -1.35 & 1.70 & 43 & -1.03 & 1.42 & 61 & -0.05 & 0.11 & 98 & -0.03 & 0.11 & 98 & -0.02 & 0.10 & 100 \\
 #   \hline
 #\end{tabular}
-#\end{table}
+#\end{table
+
+
+
+
+##########################################################################################
+#############################################
+##  TABLE (Supplement): correlation among parameters, across MCMC samples
+
+## build correlation list:
+cor.l <- lapply(rslt, FUN = function (l) {
+  l$smush -> tmp
+  tmp2 <- tmp[names(tmp) != "n.samp"]
+  arr <- do.call(abind, args = list(tmp2, along = 1))
+  mat <- apply(arr, MAR = 1, FUN = c)
+  cor(mat)
+})
+
+
+lapply(cor.l, FUN = round, digits = 2)
+
+## find maximum correlation, for each scenario:
+sapply(cor.l, FUN = function (m) {
+  diag(m) <- NA
+  max(m, na.rm = TRUE)
+})
+
+#                      [,1]
+#                 0.9913088
+#brPhi_           0.9875645
+#brPhiNbPhi       0.9879574
+#brPhiRho         0.5226141
+#brNbPhiRho_2     0.5847559
+#brNbPhiRho_tight 0.4951086
+
+
+
+## find correlation > 0.6, for each scenario:
+sapply(cor.l, FUN = function (m) {
+  diag(m) <- NA
+  which(m > 0.6, arr.ind = TRUE)
+})
+#[[1]]
+#          row col
+#iota.int2   5   4
+#iota.int1   4   5
+
+#$brPhi_
+#          row col
+#iota.int2   5   4
+#iota.int1   4   5
+
+#$brPhiNbPhi
+#          row col
+#iota.int2   5   4
+#iota.int1   4   5
+
+#$brPhiRho
+#     row col
+
+#$brNbPhiRho_2
+#     row col
+
+#$brNbPhiRho_tight
+#     row col
+
+
+#####################
+##  So how to present these results?
+##  Full tables don't seem necessary.  Maybe just describe in text?
+
