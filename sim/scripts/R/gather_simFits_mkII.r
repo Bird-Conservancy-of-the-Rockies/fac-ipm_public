@@ -271,22 +271,37 @@ sapply(cor.l, FUN = function (m) {
 ## find correlation > 0.6, for each scenario:
 sapply(cor.l, FUN = function (m) {
   diag(m) <- NA
-  which(m > 0.6, arr.ind = TRUE)
+  which(abs(m) > 0.6, arr.ind = TRUE)
 })
+
 #[[1]]
 #          row col
+#iota.int1   4   1
+#iota.int2   5   1
+#rho.int     1   4
 #iota.int2   5   4
+#rho.int     1   5
 #iota.int1   4   5
 
 #$brPhi_
 #          row col
+#iota.int1   4   1
+#iota.int2   5   1
+#rho.int     1   4
 #iota.int2   5   4
+#rho.int     1   5
 #iota.int1   4   5
 
 #$brPhiNbPhi
 #          row col
+#iota.int1   4   1
+#iota.int2   5   1
+#phi.int2    9   1
+#rho.int     1   4
 #iota.int2   5   4
+#rho.int     1   5
 #iota.int1   4   5
+#rho.int     1   9
 
 #$brPhiRho
 #     row col
@@ -297,8 +312,59 @@ sapply(cor.l, FUN = function (m) {
 #$brNbPhiRho_tight
 #     row col
 
-
 #####################
 ##  So how to present these results?
 ##  Full tables don't seem necessary.  Maybe just describe in text?
+
+
+
+#####################
+## try the same as above, but using the point estimates from scenario instances to assess the correlations:
+
+## consolidate MCMC samples across chains: fetch for each sample the difference between sample and true value, on link scale.
+par.l <- sapply(names(rslt[[1]]$smush)[1:5], FUN = function (nm) {
+#  a.l <- lapply(rslt, FUN = function (r) { r$diff.trans.prop[[nm]] })
+  a.l <- lapply(rslt, FUN = function (r) { r$smush[[nm]] })
+#  a.l <- lapply(rslt, FUN = function (r) { r$diff.emp[[nm]] })
+  do.call(abind, args = list(a.l, along = length(dim(a.l[[1]]))+1))
+  })
+  
+#par.l <- par.l[c("rho.int", "phi.int")]  
+  
+## find median value of each deviation (from true value, on link scale), over the MCMC samples:
+par.l2 <- lapply(par.l, FUN = function (a) {
+  l <- length(dim(a))
+  apply(a, MAR = (1:l)[-(l-1)], FUN = mean)
+  })
+  
+## squash into an array:
+d <- sapply(par.l2, dim)
+
+par.l2b <- lapply(par.l2, FUN = function (a) { if (length(dim(a)) == 2) {
+  array(a, dim = c(1,dim(a)))
+  } else { a }
+})
+
+par.a <- do.call(abind, args = list(par.l2b, along = 1))
+
+par.cor <- array(apply(par.a, MAR = 3, FUN = function(m) { cor(t(m)) }), dim = dim(par.a)[c(1,1,3)], dimnames = dimnames(par.a)[c(1,1,3)])
+
+par.sd <- array(apply(par.a, MAR = 3, FUN = function(m) { apply(m, MAR = 1, FUN = sd) }), dim = dim(par.a)[c(1,3)], dimnames = dimnames(par.a)[c(1,3)])
+
+par.mn <- array(apply(par.a, MAR = 3, FUN = function(m) { apply(m, MAR = 1, FUN = mean) }), dim = dim(par.a)[c(1,3)], dimnames = dimnames(par.a)[c(1,3)])
+
+par.cv <- par.sd / abs(par.mn)
+
+ntrl <- function (v) {
+  c(exp(v[1]), plogis(v[2:3]), exp(v[4:7]), plogis(v[8:11]))
+}
+
+par.mn.ntrl <- apply(par.mn, MAR = 2, FUN = ntrl)
+
+round({tmp <- par.cor; tmp[abs(tmp) < 0.6] <- NA; tmp}, 2)
+
+### interesting:
+
+plot(x = c(par.l$rho.int[,,n]), y = c(par.l$phi.int[1,,,n]), col = rgb(0,0,0,alpha = 0.009))
+points(t(par.a[c(1,8),,n]), col = "red")
 
